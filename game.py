@@ -7,8 +7,8 @@ I plan to set up the screen, frame rate, and caption in the main file
 """
 from player import Player
 
-score, time, level = 0
-player = None
+score, time, level = 0,0,0
+player = None #Will be set in initialize
 
 def initialize(screen):
     global score,time,level,player
