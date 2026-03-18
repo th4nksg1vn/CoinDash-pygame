@@ -62,7 +62,7 @@ class Player:
         #Change the direction the player is facing
         if key[pygame.K_LEFT]:
             self.direction = True
-        else:
+        elif key[pygame.K_RIGHT]:
             self.direction = False
         
         if key[pygame.K_LEFT]: self.rect.x -= self.velocity #If the left arrow key is pressed, shift the x position by -velocity
