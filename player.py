@@ -1,0 +1,134 @@
+"""
+This module defines the player, its sprites and its mechanics.
+
+Since this is the first module I (Aseda) wrote, there will be alot of comments explaining some lines and the general idea of how it works
+My understanding of pygame is that it uses surfaces to represent objects in a game, and those surfaces can be drawn to a screen
+
+Now rectangles (pygame.rect) are especially useful for handling collisions, moving, activations etc. which makes them suitable for controlling
+But when you play a game, you see the character, not the rectangle.
+So how I have designed the player is that, you control a rectangle that you cannot see, but on top of the rectangle, you see the character images playing
+
+"""
+import pygame
+
+class Player:
+    ###self.STATES = {IDLE,MOVING,DEAD}
+    ###self.x_pos, self.y_pos : int; The position of the player
+    ###self.velocity : int; The speed of the player
+    ###self.animation : dict(); The animations to be used by the player
+    ###self.animation_frame : float; Stores the current frame in the animation
+    ###self.direction : bool; Stores the direction the player is facing. False for right, True for left
+    ###self.image : pygame.image; The current image/frame of the player
+    ###self.rect : A rectangle which is actually being controlled by the player
+    
+    def __init__(self,x_pos,y_pos):
+        ##STATES{ - A shoddy representation of an enum used to represent the player state
+        self.IDLE = 1
+        self.MOVING = 2
+        ##}
+        
+        self.velocity = 5
+        self.state = self.IDLE
+        self.animation = {
+            "idle":[pygame.image.load("assets/player/idle/player-idle-1.png"),
+                    pygame.image.load("assets/player/idle/player-idle-2.png"),
+                    pygame.image.load("assets/player/idle/player-idle-3.png")]
+            
+            ,"run":[pygame.image.load("assets/player/run/player-run-1.png"),
+                   pygame.image.load("assets/player/run/player-run-2.png"),
+                   pygame.image.load("assets/player/run/player-run-3.png"),
+                   pygame.image.load("assets/player/run/player-run-4.png"),
+                   pygame.image.load("assets/player/run/player-run-5.png"),
+                   pygame.image.load("assets/player/run/player-run-6.png")]
+                          }
+        self.animation_frame = 0
+        self.direction = False
+        
+        self.image = pygame.image.load("assets/player/idle/player-idle-1.png").convert_alpha()
+        self.image = pygame.transform.scale_by(self.image,2)
+        self.rect = self.image.get_rect(center=(x_pos,y_pos))
+        self.rect.center = (x_pos, y_pos)
+        
+    
+    def move(self,boundry):
+        key = pygame.key.get_pressed() #Get the state of all buttons to see if they are pressed or not
+        
+        #Change the state of the player if they are moving
+        if key[pygame.K_LEFT] or key[pygame.K_RIGHT] or key[pygame.K_UP] or key[pygame.K_DOWN]:
+            self.state = self.MOVING
+        else:
+            self.state = self.IDLE
+            
+        #Change the direction the player is facing
+        if key[pygame.K_LEFT]:
+            self.direction = True
+        else:
+            self.direction = False
+        
+        if key[pygame.K_LEFT]: self.rect.x -= self.velocity #If the left arrow key is pressed, shift the x position by -velocity
+        if key[pygame.K_RIGHT]: self.rect.x += self.velocity
+        if key[pygame.K_UP]: self.rect.y -= self.velocity
+        if key[pygame.K_DOWN]: self.rect.y += self.velocity
+        
+        #Keep the player within the boundry with clamping
+        self.rect.clamp_ip(boundry.get_rect())
+        
+    def animate(self,animation,framerate):
+        ##Animation number update
+        self.animation_frame += 1*(10/framerate)
+        if self.animation_frame>len(animation)-1:  self.animation_frame = 0
+        
+        ##Show the current frame
+        self.image = animation[int(self.animation_frame)].convert_alpha()
+        self.image = pygame.transform.scale_by(self.image,2)
+        if self.direction: self.image = pygame.transform.flip(self.image,True, False) #If the player is facing left, reflect the image along the x-direction
+
+        
+    def update(self,screen):
+        #Animations to play
+        if self.state == self.IDLE:
+             self.animate(self.animation["idle"],60)
+        elif self.state == self.MOVING:
+             self.animate(self.animation["run"],60)
+            
+        #Draw player
+        screen.blit(self.image,self.rect)
+        
+        
+            
+    
+###TESTING###
+if __name__ == "__main__":#Used for testing this part only before adding it to the main program
+    
+    pygame.init() #Initialize pygame
+    
+    SCREEN = pygame.display.set_mode((500,500)) #Create a new 500 x 500 px screen (window)
+    pygame.display.set_caption("Player module") #Set the name of the screen
+    
+    FRAMERATE = 60 #Game runs at 60 fps
+    clock = pygame.time.Clock()
+    
+    player = Player(100,100) #Create a player object
+    
+    RUNNING = True 
+    while RUNNING:
+        #We use a loop because without it, the screen will show for about a millisecond and then close
+        
+        SCREEN.fill("#222222")#Continuoulsy fill the background with black        
+        
+        player.move(SCREEN) #Move the player within the boundry of the screen
+
+        pygame.draw.rect(SCREEN,"#ffffff",player.rect)
+        
+        player.update(SCREEN)
+        pygame.display.update()#Update the screen (move to the next frame)
+        
+        clock.tick(FRAMERATE)
+        
+        for event in pygame.event.get(): #If the x button is pressed, close the game
+            if event.type == pygame.QUIT:
+                RUNNING = False
+    pygame.quit()
+    
+    
+    
