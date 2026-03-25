@@ -25,6 +25,7 @@ class Player:
         ##STATES{ - A shoddy representation of an enum used to represent the player state
         self.IDLE = 1
         self.MOVING = 2
+        self.HURT = 3
         ##}
         
         self.velocity = 5
@@ -40,38 +41,50 @@ class Player:
                    pygame.image.load("assets/player/run/player-run-4.png"),
                    pygame.image.load("assets/player/run/player-run-5.png"),
                    pygame.image.load("assets/player/run/player-run-6.png")]
-                          }
+            
+            ,"hurt":[pygame.image.load("assets/player/hurt/player-hurt-1.png"),
+                     pygame.image.load("assets/player/hurt/player-hurt-2.png"),
+                     pygame.image.load("assets/player/hurt/player-hurt-1.png"),
+                     pygame.image.load("assets/player/hurt/player-hurt-2.png"),
+                     pygame.image.load("assets/player/hurt/player-hurt-1.png"),
+                     pygame.image.load("assets/player/hurt/player-hurt-2.png")
+                    ]                      
+            }
         self.animation_frame = 0
         self.direction = False
         
         self.image = pygame.image.load("assets/player/idle/player-idle-1.png").convert_alpha()
         self.image = pygame.transform.scale_by(self.image,2)
         self.rect = self.image.get_rect(center=(x_pos,y_pos))
-        self.rect.center = (x_pos, y_pos)
+        ##Coin collider here
+        #cactus_collider is what the cactus collides with before determining if the game is over.
+        self.cactus_collider = self.collider = (self.rect.copy()).scale_by(0.8)
+        
         
     
     def move(self,boundry):
-        key = pygame.key.get_pressed() #Get the state of all buttons to see if they are pressed or not
+        if self.state != self.HURT: #The player can move if the state is not hurt
+            key = pygame.key.get_pressed() #Get the state of all buttons to see if they are pressed or not
         
-        #Change the state of the player if they are moving
-        if key[pygame.K_LEFT] or key[pygame.K_RIGHT] or key[pygame.K_UP] or key[pygame.K_DOWN]:
-            self.state = self.MOVING
-        else:
-            self.state = self.IDLE
+            #Change the state of the player if they are moving
+            if key[pygame.K_LEFT] or key[pygame.K_RIGHT] or key[pygame.K_UP] or key[pygame.K_DOWN]:
+                self.state = self.MOVING
+            else:
+                self.state = self.IDLE
             
-        #Change the direction the player is facing
-        if key[pygame.K_LEFT]:
-            self.direction = True
-        elif key[pygame.K_RIGHT]:
-            self.direction = False
+            #Change the direction the player is facing
+            if key[pygame.K_LEFT]:
+                self.direction = True
+            elif key[pygame.K_RIGHT]:
+                self.direction = False
         
-        if key[pygame.K_LEFT]: self.rect.x -= self.velocity #If the left arrow key is pressed, shift the x position by -velocity
-        if key[pygame.K_RIGHT]: self.rect.x += self.velocity
-        if key[pygame.K_UP]: self.rect.y -= self.velocity
-        if key[pygame.K_DOWN]: self.rect.y += self.velocity
+            if key[pygame.K_LEFT]: self.rect.x -= self.velocity #If the left arrow key is pressed, shift the x position by -velocity
+            if key[pygame.K_RIGHT]: self.rect.x += self.velocity
+            if key[pygame.K_UP]: self.rect.y -= self.velocity
+            if key[pygame.K_DOWN]: self.rect.y += self.velocity
         
-        #Keep the player within the boundry with clamping
-        self.rect.clamp_ip(boundry.get_rect())
+            #Keep the player within the boundry with clamping
+            self.rect.clamp_ip(boundry.get_rect())
         
     def animate(self,animation,framerate):
         ##Animation number update
@@ -90,7 +103,12 @@ class Player:
              self.animate(self.animation["idle"],60)
         elif self.state == self.MOVING:
              self.animate(self.animation["run"],60)
+        elif self.state == self.HURT:
+            self.animate(self.animation["hurt"],60)
             
+        #Adjust colliders
+        self.cactus_collider.center = self.rect.center
+        
         #Draw player
         screen.blit(self.image,self.rect)
         
@@ -119,6 +137,7 @@ if __name__ == "__main__":#Used for testing this part only before adding it to t
         player.move(SCREEN) #Move the player within the boundry of the screen
 
         pygame.draw.rect(SCREEN,"#ffffff",player.rect)
+        pygame.draw.rect(SCREEN,"#bb0000",player.cactus_collider)
         
         player.update(SCREEN)
         pygame.display.update()#Update the screen (move to the next frame)
