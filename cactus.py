@@ -48,7 +48,7 @@ if __name__ == "__main__":
         #Draw the boundry and collision boxes for each cactus
         for cact in cactii:
             pygame.draw.rect(SCREEN,"#ffffff",cact.rect)
-            pygame.draw.rect(SCREEN,"#bb0000",cact.cactus_collider)
+            pygame.draw.rect(SCREEN,"#bb0000",cact.collider)
         
         cactii.draw(SCREEN)
         

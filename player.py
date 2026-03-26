@@ -33,6 +33,9 @@ class Player:
         self.animation = {
             "idle":[pygame.image.load("assets/player/idle/player-idle-1.png"),
                     pygame.image.load("assets/player/idle/player-idle-2.png"),
+                    pygame.image.load("assets/player/idle/player-idle-3.png"),
+                    pygame.image.load("assets/player/idle/player-idle-1.png"),
+                    pygame.image.load("assets/player/idle/player-idle-2.png"),
                     pygame.image.load("assets/player/idle/player-idle-3.png")]
             
             ,"run":[pygame.image.load("assets/player/run/player-run-1.png"),
