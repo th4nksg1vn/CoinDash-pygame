@@ -61,7 +61,7 @@ class Player:
         self.rect = self.image.get_rect(center=(x_pos,y_pos))
         ##Coin collider here
         #cactus_collider is what the cactus collides with before determining if the game is over.
-        self.cactus_collider = self.collider = (self.rect.copy()).scale_by(0.8)
+        self.cactus_collider = (self.rect.copy()).scale_by(0.8)
         
         
     
