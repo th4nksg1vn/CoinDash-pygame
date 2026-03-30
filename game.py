@@ -59,18 +59,19 @@ def spawn_cactus(screen):
     screen_size = (screen.get_rect().right,screen.get_rect().bottom) #Get the size of the screen
     spawn_no = level//5 #Number of cactii to spawn
     
+    
     #The logic behind this loop is in the cactus module. I might have to change the values later to variables
     for i in range(spawn_no):
         spawn_x = random.randint(0,452)
         spawn_y = random.randint(0,439)
         
-        #Spawn the cactus somewhere else in the event it spawns on top of the player (TODO: DO NOT SPAWN ON COIN)
-        while (spawn_x in range(player.rect.left,player.rect.right)) or (spawn_y in range(player.rect.top,player.rect.bottom)):
-            print("On Player!")
+        #Spawn the cactus somewhere else in the event it spawns on top of the player
+        while ((spawn_x in range(player.rect.left,player.rect.right)) or (spawn_y in range(player.rect.top,player.rect.bottom))) or len(pygame.sprite.spritecollide(Cactus(spawn_x,spawn_y),coins,False))!=0:
+            print("Cactus on Player!")
             spawn_x = random.randint(0,452)
             spawn_y = random.randint(0,439)
 
-        print("Not on Player anymore!")
+        print("Cactus not on Player anymore!")
         cactii.add(Cactus(spawn_x,spawn_y))
 
 def new_level(screen):
