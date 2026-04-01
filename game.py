@@ -47,15 +47,15 @@ def spawn_coin(screen):
     screen_size = (screen.get_rect().right,screen.get_rect().bottom) #Get the size of the screen
     spawn_no = 3+level//3 #Number of coins to spawn
     
-    #The logic behind this loop is in the coin module. We might have to change the values later to variables
+    #The logic behind this loop is in the coin module.
     for i in range(spawn_no):
-        spawn_x = random.randint(0,452)
-        spawn_y = random.randint(0,439)
+        spawn_x = random.randint(0,screen.get_width() - Coin(0,0).rect.right)
+        spawn_y = random.randint(0,screen.get_height() - Coin(0,0).rect.bottom)
         
         #Spawn the coin somewhere else in the event it spawns on top of the player
         while (spawn_x in range(player.rect.left,player.rect.right)) or (spawn_y in range(player.rect.top,player.rect.bottom)):
-            spawn_x = random.randint(0,452)
-            spawn_y = random.randint(0,439)
+            spawn_x = random.randint(0,screen.get_width() - Coin(0,0).rect.right)
+            spawn_y = random.randint(0,screen.get_height() - Coin(0,0).rect.bottom)
 
         coins.add(Coin(spawn_x,spawn_y))
 
@@ -71,15 +71,15 @@ def spawn_cactus(screen):
     spawn_no = level//5 #Number of cactii to spawn
     
     
-    #The logic behind this loop is in the cactus module. I might have to change the values later to variables
+    #The logic behind this loop is in the cactus module.
     for i in range(spawn_no):
-        spawn_x = random.randint(0,452)
-        spawn_y = random.randint(0,439)
+        spawn_x = random.randint(0,screen.get_width() - Cactus(0,0).rect.right)
+        spawn_y = random.randint(0,screen.get_height() - Cactus(0,0).rect.bottom)
         
         #Spawn the cactus somewhere else in the event it spawns on top of the player
         while ((spawn_x in range(player.rect.left,player.rect.right)) or (spawn_y in range(player.rect.top,player.rect.bottom))) or len(pygame.sprite.spritecollide(Cactus(spawn_x,spawn_y),coins,False))!=0:
-            spawn_x = random.randint(0,452)
-            spawn_y = random.randint(0,439)
+            spawn_x = random.randint(0,screen.get_width() - Cactus(0,0).rect.right)
+            spawn_y = random.randint(0,screen.get_height() - Cactus(0,0).rect.bottom)
 
         cactii.add(Cactus(spawn_x,spawn_y))
 
