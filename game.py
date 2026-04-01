@@ -11,7 +11,7 @@ from cactus import Cactus
 from coin import Coin
 
 #Import necessary modules
-from pygame import sprite
+import pygame
 import random
 
 #GLOBALS
@@ -21,8 +21,20 @@ time_of_death = 0
 score, time, level = 0,0,0
 player = None #Will be set in initialize
 
-cactii = sprite.Group() #All cactii will be stored in this group instead of an list
-coins = sprite.Group() #All coins to be collected will be stored in this group instead of an list
+cactii = pygame.sprite.Group() #All cactii will be stored in this group instead of an list
+coins = pygame.sprite.Group() #All coins to be collected will be stored in this group instead of an list
+
+def increase_score():
+    global score
+    score+=1
+
+def set_time(framerate):
+    global time, playing
+    if time<0:
+        playing = False
+        game_over()
+    else:
+        time=time-(1/framerate)
 
 def spawn_coin(screen):
     """First 2 coins spawn at level 1
@@ -33,7 +45,7 @@ def spawn_coin(screen):
     global coins,level,player
     
     screen_size = (screen.get_rect().right,screen.get_rect().bottom) #Get the size of the screen
-    spawn_no = 1+level #Number of coins to spawn
+    spawn_no = 3+level//3 #Number of coins to spawn
     
     #The logic behind this loop is in the coin module. We might have to change the values later to variables
     for i in range(spawn_no):
@@ -42,7 +54,6 @@ def spawn_coin(screen):
         
         #Spawn the coin somewhere else in the event it spawns on top of the player
         while (spawn_x in range(player.rect.left,player.rect.right)) or (spawn_y in range(player.rect.top,player.rect.bottom)):
-            print("Coin on player!")
             spawn_x = random.randint(0,452)
             spawn_y = random.randint(0,439)
 
@@ -67,22 +78,22 @@ def spawn_cactus(screen):
         
         #Spawn the cactus somewhere else in the event it spawns on top of the player
         while ((spawn_x in range(player.rect.left,player.rect.right)) or (spawn_y in range(player.rect.top,player.rect.bottom))) or len(pygame.sprite.spritecollide(Cactus(spawn_x,spawn_y),coins,False))!=0:
-            print("Cactus on Player!")
             spawn_x = random.randint(0,452)
             spawn_y = random.randint(0,439)
 
-        print("Cactus not on Player anymore!")
         cactii.add(Cactus(spawn_x,spawn_y))
 
 def new_level(screen):
-    global level
+    global level,time
     
     level_sound = pygame.mixer.Sound("assets/audio/Level.wav") #Play the sound to start the game
     level_sound.play()
     
     level+=1
+    time+=3
     spawn_coin(screen)
     spawn_cactus(screen)
+    print(f"level: {level}")
 
 def check_collected():
     global coins, player
@@ -92,13 +103,13 @@ def check_collected():
     for this_coin in coins.sprites(): #For each coin in the sprite.Group
         if player.rect.colliderect(this_coin.collider): #If the player.rect has collided with the coin.rect
             pickup_sound.play() #Play the coin_pickup sound
-            #increase_score() #Update the score
+            increase_score() #Update the score
             this_coin.kill() #Remove this coin
 
 def check_collided():
     global cactii, player, playing
     
-    hit_sound = pygame.mixer.Sound("assets/audio/EndSound.wav") #Sound to play when a cactus is touched
+    hit_sound = pygame.mixer.Sound("assets/audio/Hit.wav") #Sound to play when a cactus is touched
     
     for this_cactus in cactii.sprites(): #For each cactus in the sprite.Group
         if player.cactus_collider.colliderect(this_cactus.collider): #If the player has collided with the cactus
@@ -115,16 +126,14 @@ def game_over():
     end_sound.play()
     
     player.state = player.HURT #Set player state to hurt
-
-    #Delete the player
     
 
 def initialize(screen):
     global score,time,level,player
     
     screen_size=(screen.get_rect().right,screen.get_rect().bottom) #Get the size of the screen
-    score = 0 #Set score
-    time = 10 #Set time to 10s
+    score = 1 #Set score
+    time = 3 #Set time to 10s
     level = 0 #Set level to 0
     player = Player(int(screen_size[0]/2),int(screen_size[1]/2)) #Spawn the player at the center of the screen
     new_level(screen) #Call new_level to spawn the appropriate number of cactii and coins
@@ -143,20 +152,17 @@ if __name__ == "__main__":
     clock = pygame.time.Clock()
     
     initialize(SCREEN)
-
-    #For testing - set level to n and spawn n//5 cactii
-    #level = 2
-    #new_level(SCREEN)
-    #----------------------
     
     background = pygame.image.load("assets/bg-grass.png")
+    
+    font = pygame.font.Font('assets/Kenney Bold.ttf',24)
     
     RUNNING = True 
     while RUNNING:
         
         SCREEN.blit(background,(0,0))  #Draw the grass background image onto the screen     
 
-
+        
         coins.draw(SCREEN)
         cactii.draw(SCREEN) #Draw all cactii on the screen
 
@@ -164,11 +170,14 @@ if __name__ == "__main__":
         
         if playing: #If the game is still playing
             check_collected()
+            
+            set_time(FRAMERATE) #decrease the time
+            
             if len(coins.sprites()) == 0: #If all the coins have been collected
                 cactii.empty() #Remove all the cactii in this level (new ones will be drawn in the next level)
                 new_level(SCREEN) #Go to the next level
             
-            if check_collided(): #If the player has hit a cactus...
+            if check_collided() or time< 0: #If the player has hit a cactus or time has run out...
                 time_of_death = pygame.time.get_ticks() #Get the exact time the player died
                     
         else:#The game has ended
@@ -178,8 +187,15 @@ if __name__ == "__main__":
         
         player.update(SCREEN)        
         coins.update()
+
+        time_text = font.render(f'{int(time)}s',True,"#ffffff")
+        score_text = font.render(f'{score}pts',True,"#ffffff")
+    
+        SCREEN.blit(time_text,(10,10))  #Display the time on the screen
+        SCREEN.blit(score_text,(10,50))  #Display the score on the screen
+
         pygame.display.update()#Update the screen (move to the next frame)
-        
+
         clock.tick(FRAMERATE)
         
         for event in pygame.event.get(): #If the x button is pressed, close the game
