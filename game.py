@@ -29,17 +29,13 @@ def increase_score():
     score+=1
 
 def set_time(framerate):
-    global time, playing
-    if time<0:
-        playing = False
-        game_over()
-    else:
-        time=time-(1/framerate)
+    global time
+    time=time-(1/framerate)
 
 def spawn_coin(screen):
     """First 2 coins spawn at level 1
-    n+1 coins spawn every n levels
-    (so level 2 will spawn 3 coins, level 3 will spawn 4...)
+    3+n//3 coins spawn every n levels
+    (so level 1 will spawn 3 coins, level 3 will spawn 4, level 6 will sapwn 5...)
 
     """
     global coins,level,player
@@ -114,8 +110,6 @@ def check_collided():
     for this_cactus in cactii.sprites(): #For each cactus in the sprite.Group
         if player.cactus_collider.colliderect(this_cactus.collider): #If the player has collided with the cactus
             hit_sound.play()
-            playing = False
-            game_over() #End the game
             return True
     return False
 
@@ -132,8 +126,8 @@ def initialize(screen):
     global score,time,level,player
     
     screen_size=(screen.get_rect().right,screen.get_rect().bottom) #Get the size of the screen
-    score = 1 #Set score
-    time = 3 #Set time to 10s
+    score = 0 #Set score
+    time = 7 #Set time to 10s, new level adds 3s
     level = 0 #Set level to 0
     player = Player(int(screen_size[0]/2),int(screen_size[1]/2)) #Spawn the player at the center of the screen
     new_level(screen) #Call new_level to spawn the appropriate number of cactii and coins
@@ -177,7 +171,11 @@ if __name__ == "__main__":
                 cactii.empty() #Remove all the cactii in this level (new ones will be drawn in the next level)
                 new_level(SCREEN) #Go to the next level
             
-            if check_collided() or time< 0: #If the player has hit a cactus or time has run out...
+            if check_collided() or time<0: #If the player has hit a cactus or time has run out...
+                time_text = font.render(f'Time Up!',True,"#ffaaaa")
+                playing = False
+                game_over() #End the game
+                print(f"Game Over!\nFinal score: {score}pts")
                 time_of_death = pygame.time.get_ticks() #Get the exact time the player died
                     
         else:#The game has ended
@@ -187,8 +185,14 @@ if __name__ == "__main__":
         
         player.update(SCREEN)        
         coins.update()
-
-        time_text = font.render(f'{int(time)}s',True,"#ffffff")
+        
+        if time<=0:
+            time_text = font.render(f'Time Up!',True,"#ff8888")
+        elif time<1:#make the timer red when 1 second is remaining
+            time_text = font.render(f'{round(time,1)}s',True,"#ff8888")
+        else:#Else keep it white
+            time_text = font.render(f'{ int(time)}s',True,"#ffffff")
+            
         score_text = font.render(f'{score}pts',True,"#ffffff")
     
         SCREEN.blit(time_text,(10,10))  #Display the time on the screen
