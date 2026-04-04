@@ -10,7 +10,9 @@ class Coin(pygame.sprite.Sprite):
 
         self.image = pygame.image.load("assets/coin/coin-frame-1.png").convert_alpha()
         self.image = pygame.transform.scale_by(self.image,0.4)
-        self.rect = self.image.get_rect(center=(x_pos, y_pos))
+        self.rect = self.image.get_rect()
+        self.rect.x = x_pos
+        self.rect.y = y_pos
 
         # Smaller collider for fair collision
         self.collider = (self.rect.copy()).scale_by(0.8)

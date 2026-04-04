@@ -8,7 +8,9 @@ class Cactus(pygame.sprite.Sprite):
     def __init__(self, x_pos,y_pos):
         super().__init__() #Initilize the base class
         self.image = pygame.image.load("assets/cactus.png").convert_alpha()
-        self.rect = self.image.get_rect(center=(x_pos,y_pos))
+        self.rect = self.image.get_rect()
+        self.rect.x = x_pos
+        self.rect.y = y_pos
         
         #collider is what the player collides with before determining if the game is over.
         #It is smaller than the image/rect to allow for leniency
