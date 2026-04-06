@@ -124,7 +124,7 @@ def game_over():
     player.state = player.HURT #Set player state to hurt
     
 
-def initialize(screen):
+def initialize(screen,character=1):
     global score,time,level,player, cactii, coins, playing
     
     #These globals must be reset in order to start the game again from main
@@ -136,14 +136,14 @@ def initialize(screen):
     score = 0 #Set score
     time = 7 #Set time to 10s, new level adds 3s
     level = 0 #Set level to 0
-    player=Player(int(screen_size[0]/2),int(screen_size[1]/2))
+    player=Player(int(screen_size[0]/2),int(screen_size[1]/2),character)
     new_level(screen) #Call new_level to spawn the appropriate number of cactii and coins
     
 
 def play_game(screen,framerate,clock,character=1,bg=None):
     global playing, time_of_death, score, time, level, player, cactii, coins
     
-    initialize(screen)
+    initialize(screen,character)
     
     if bg is None:
         background = pygame.image.load("assets/bg-grass.png")
@@ -218,6 +218,6 @@ if __name__ == "__main__":
     FRAMERATE = 60
     CLOCK = pygame.time.Clock()
     
-    final_result = play_game(SCREEN,FRAMERATE,CLOCK)
+    final_result = play_game(SCREEN,FRAMERATE,CLOCK,2)
     print(f"Game Over!\nFinal Level: {final_result[1]}\nFinal Score: {final_result[0]}pts")
     pygame.quit()

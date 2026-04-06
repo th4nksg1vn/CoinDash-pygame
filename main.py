@@ -2,7 +2,7 @@
 This is the file to be opened if you want to play the game.
 All the screens, score handling and others will be handled here.
 """
-#Import all game components
+#Import game components
 from game import play_game
 from button import Button
 
@@ -16,12 +16,22 @@ SCREEN = pygame.display.set_mode((480,720))
 FRAMERATE = 60
 BACKGROUND = pygame.image.load("assets/bg-grass.png")
 CLOCK = pygame.time.Clock()
+CHARACTER = 1
 pygame.display.set_caption("Coin Dash!")
 
 
 def settings():
-    global SCREEN,FRAMERATE,BACKGROUND,CLOCK
+    global SCREEN,FRAMERATE,BACKGROUND,CLOCK,CHARACTER
     title = pygame.font.Font("assets/Kenney Bold.ttf",42).render("Settings",True,"#ffffff")
+    background_label = pygame.font.Font("assets/Kenney Bold.ttf",12).render("background",True,"#ffffff")
+    character_label = pygame.font.Font("assets/Kenney Bold.ttf",12).render("character",True,"#ffffff")
+    
+    plains_btn = Button("assets/btn_background.png",(60,225),"plains","assets/Kenney Bold.ttf",font_size=15,scale=0.45)
+    dungeon_btn = Button("assets/btn_background.png",(250,225),"dungeon","assets/Kenney Bold.ttf",font_size=15,scale=0.45)
+
+    fox_btn = Button("assets/player/fox/idle/fox-idle-1.png",(60,360),scale=4)
+    knight_btn = Button("assets/player/knight/idle/knight-idle-1.png",(250,360),scale=4.2)
+
     back_btn = Button("assets/btn_background.png",(155,570),"back","assets/Kenney Bold.ttf",font_size=20,scale=0.50)
     
     RUNNING = True
@@ -29,9 +39,15 @@ def settings():
         #Draw backgrounds and text
         SCREEN.blit(BACKGROUND,(0,0))
         SCREEN.blit(title,(90,100))
+        SCREEN.blit(background_label,(185,200))
+        SCREEN.blit(character_label,(185,350))
         
         
         #Draw buttons on the screen
+        plains_btn.draw(SCREEN)
+        dungeon_btn.draw(SCREEN)
+        fox_btn.draw(SCREEN)
+        knight_btn.draw(SCREEN)
         back_btn.draw(SCREEN)
         
         for event in pygame.event.get():
@@ -40,7 +56,19 @@ def settings():
                 pygame.quit()
                 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if back_btn.is_pressed():return #Go back to the previous screen
+                if plains_btn.is_pressed(): BACKGROUND = pygame.image.load("assets/bg-grass.png") #Change the background to grass
+                elif dungeon_btn.is_pressed(): BACKGROUND = pygame.image.load("assets/bg-dungeon.png") #Change the background to stone
+                
+                #Beacause there is no indicator to see if a new character has been selected, when choosing a new character, go back to the previous screen immediately
+                elif fox_btn.is_pressed():
+                    CHARACTER = 1 #Select the fox
+                    return
+                elif knight_btn.is_pressed():
+                    CHARACTER = 2 #Select the knight
+                    return
+                
+                elif back_btn.is_pressed():return #Go back to the previous screen
+                
         CLOCK.tick(FRAMERATE)
         pygame.display.update()
     
@@ -97,7 +125,7 @@ def main_menu():
                 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if start_btn.is_pressed():
-                    results = play_game(SCREEN,FRAMERATE,CLOCK,bg=BACKGROUND)
+                    results = play_game(SCREEN,FRAMERATE,CLOCK,CHARACTER,BACKGROUND)
                     
                 elif scores_btn.is_pressed(): scores()
                 elif settings_btn.is_pressed():settings()

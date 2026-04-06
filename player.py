@@ -21,7 +21,7 @@ class Player:
     ###self.image : pygame.image; The current image/frame of the player
     ###self.rect : pygame.rect; A rectangle which is actually being controlled by the player
     
-    def __init__(self,x_pos,y_pos):
+    def __init__(self,x_pos,y_pos,character=1):
         ##STATES{ - A shoddy representation of an enum used to represent the player state
         self.IDLE = 1
         self.MOVING = 2
@@ -30,33 +30,60 @@ class Player:
         
         self.velocity = 5
         self.state = self.IDLE
-        self.animation = {
-            "idle":[pygame.image.load("assets/player/fox/idle/player-idle-1.png"),
-                    pygame.image.load("assets/player/fox/idle/player-idle-2.png"),
-                    pygame.image.load("assets/player/fox/idle/player-idle-3.png"),
-                    pygame.image.load("assets/player/fox/idle/player-idle-1.png"),
-                    pygame.image.load("assets/player/fox/idle/player-idle-2.png"),
-                    pygame.image.load("assets/player/fox/idle/player-idle-3.png")]
+        if character == 1:
+            self.animation = {
+            "idle":[pygame.image.load("assets/player/fox/idle/fox-idle-1.png"),
+                    pygame.image.load("assets/player/fox/idle/fox-idle-2.png"),
+                    pygame.image.load("assets/player/fox/idle/fox-idle-3.png"),
+                    pygame.image.load("assets/player/fox/idle/fox-idle-1.png"),
+                    pygame.image.load("assets/player/fox/idle/fox-idle-2.png"),
+                    pygame.image.load("assets/player/fox/idle/fox-idle-3.png")]
             
-            ,"run":[pygame.image.load("assets/player/fox/run/player-run-1.png"),
-                   pygame.image.load("assets/player/fox/run/player-run-2.png"),
-                   pygame.image.load("assets/player/fox/run/player-run-3.png"),
-                   pygame.image.load("assets/player/fox/run/player-run-4.png"),
-                   pygame.image.load("assets/player/fox/run/player-run-5.png"),
-                   pygame.image.load("assets/player/fox/run/player-run-6.png")]
+            ,"run":[pygame.image.load("assets/player/fox/run/fox-run-1.png"),
+                   pygame.image.load("assets/player/fox/run/fox-run-2.png"),
+                   pygame.image.load("assets/player/fox/run/fox-run-3.png"),
+                   pygame.image.load("assets/player/fox/run/fox-run-4.png"),
+                   pygame.image.load("assets/player/fox/run/fox-run-5.png"),
+                   pygame.image.load("assets/player/fox/run/fox-run-6.png")]
             
-            ,"hurt":[pygame.image.load("assets/player/fox/hurt/player-hurt-1.png"),
-                     pygame.image.load("assets/player/fox/hurt/player-hurt-2.png"),
-                     pygame.image.load("assets/player/fox/hurt/player-hurt-1.png"),
-                     pygame.image.load("assets/player/fox/hurt/player-hurt-2.png"),
-                     pygame.image.load("assets/player/fox/hurt/player-hurt-1.png"),
-                     pygame.image.load("assets/player/fox/hurt/player-hurt-2.png")
+            ,"hurt":[pygame.image.load("assets/player/fox/hurt/fox-hurt-1.png"),
+                     pygame.image.load("assets/player/fox/hurt/fox-hurt-2.png"),
+                     pygame.image.load("assets/player/fox/hurt/fox-hurt-1.png"),
+                     pygame.image.load("assets/player/fox/hurt/fox-hurt-2.png"),
+                     pygame.image.load("assets/player/fox/hurt/fox-hurt-1.png"),
+                     pygame.image.load("assets/player/fox/hurt/fox-hurt-2.png")
                     ]                      
             }
+        elif character == 2:
+            self.animation = {
+            "idle":[pygame.image.load("assets/player/knight/idle/knight-idle-1.png"),
+                    pygame.image.load("assets/player/knight/idle/knight-idle-2.png"),
+                    pygame.image.load("assets/player/knight/idle/knight-idle-3.png"),
+                    pygame.image.load("assets/player/knight/idle/knight-idle-1.png"),
+                    pygame.image.load("assets/player/knight/idle/knight-idle-2.png"),
+                    pygame.image.load("assets/player/knight/idle/knight-idle-3.png")]
+            
+            ,"run":[pygame.image.load("assets/player/knight/run/knight-run-1.png"),
+                   pygame.image.load("assets/player/knight/run/knight-run-2.png"),
+                   pygame.image.load("assets/player/knight/run/knight-run-3.png"),
+                   pygame.image.load("assets/player/knight/run/knight-run-4.png"),
+                   pygame.image.load("assets/player/knight/run/knight-run-5.png"),
+                   pygame.image.load("assets/player/knight/run/knight-run-6.png")]
+            
+            ,"hurt":[pygame.image.load("assets/player/knight/hurt/knight-hurt-1.png"),
+                     pygame.image.load("assets/player/knight/hurt/knight-hurt-2.png"),
+                     pygame.image.load("assets/player/knight/hurt/knight-hurt-1.png"),
+                     pygame.image.load("assets/player/knight/hurt/knight-hurt-2.png"),
+                     pygame.image.load("assets/player/knight/hurt/knight-hurt-1.png"),
+                     pygame.image.load("assets/player/knight/hurt/knight-hurt-2.png")
+                    ]                      
+            }
+
+            
         self.animation_frame = 0
         self.direction = False
         
-        self.image = pygame.image.load("assets/player/fox/idle/player-idle-1.png").convert_alpha()
+        self.image = pygame.image.load("assets/player/fox/idle/fox-idle-1.png").convert_alpha()
         self.image = pygame.transform.scale_by(self.image,2)
         self.rect = self.image.get_rect(center=(x_pos,y_pos))
         #Coin collider is what the coin collides with before collecting it
@@ -131,7 +158,7 @@ if __name__ == "__main__":#Used for testing this part only before adding it to t
     FRAMERATE = 60 #Game runs at 60 fps
     clock = pygame.time.Clock()
     
-    player = Player(100,100) #Create a player object
+    player = Player(100,100,2) #Create a player object
     
     RUNNING = True 
     while RUNNING:
