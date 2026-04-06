@@ -19,7 +19,7 @@ class Player:
     ###self.animation_frame : float; Stores the current frame in the animation
     ###self.direction : bool; Stores the direction the player is facing. False for right, True for left
     ###self.image : pygame.image; The current image/frame of the player
-    ###self.rect : A rectangle which is actually being controlled by the player
+    ###self.rect : pygame.rect; A rectangle which is actually being controlled by the player
     
     def __init__(self,x_pos,y_pos):
         ##STATES{ - A shoddy representation of an enum used to represent the player state
@@ -31,35 +31,36 @@ class Player:
         self.velocity = 5
         self.state = self.IDLE
         self.animation = {
-            "idle":[pygame.image.load("assets/player/idle/player-idle-1.png"),
-                    pygame.image.load("assets/player/idle/player-idle-2.png"),
-                    pygame.image.load("assets/player/idle/player-idle-3.png"),
-                    pygame.image.load("assets/player/idle/player-idle-1.png"),
-                    pygame.image.load("assets/player/idle/player-idle-2.png"),
-                    pygame.image.load("assets/player/idle/player-idle-3.png")]
+            "idle":[pygame.image.load("assets/player/fox/idle/player-idle-1.png"),
+                    pygame.image.load("assets/player/fox/idle/player-idle-2.png"),
+                    pygame.image.load("assets/player/fox/idle/player-idle-3.png"),
+                    pygame.image.load("assets/player/fox/idle/player-idle-1.png"),
+                    pygame.image.load("assets/player/fox/idle/player-idle-2.png"),
+                    pygame.image.load("assets/player/fox/idle/player-idle-3.png")]
             
-            ,"run":[pygame.image.load("assets/player/run/player-run-1.png"),
-                   pygame.image.load("assets/player/run/player-run-2.png"),
-                   pygame.image.load("assets/player/run/player-run-3.png"),
-                   pygame.image.load("assets/player/run/player-run-4.png"),
-                   pygame.image.load("assets/player/run/player-run-5.png"),
-                   pygame.image.load("assets/player/run/player-run-6.png")]
+            ,"run":[pygame.image.load("assets/player/fox/run/player-run-1.png"),
+                   pygame.image.load("assets/player/fox/run/player-run-2.png"),
+                   pygame.image.load("assets/player/fox/run/player-run-3.png"),
+                   pygame.image.load("assets/player/fox/run/player-run-4.png"),
+                   pygame.image.load("assets/player/fox/run/player-run-5.png"),
+                   pygame.image.load("assets/player/fox/run/player-run-6.png")]
             
-            ,"hurt":[pygame.image.load("assets/player/hurt/player-hurt-1.png"),
-                     pygame.image.load("assets/player/hurt/player-hurt-2.png"),
-                     pygame.image.load("assets/player/hurt/player-hurt-1.png"),
-                     pygame.image.load("assets/player/hurt/player-hurt-2.png"),
-                     pygame.image.load("assets/player/hurt/player-hurt-1.png"),
-                     pygame.image.load("assets/player/hurt/player-hurt-2.png")
+            ,"hurt":[pygame.image.load("assets/player/fox/hurt/player-hurt-1.png"),
+                     pygame.image.load("assets/player/fox/hurt/player-hurt-2.png"),
+                     pygame.image.load("assets/player/fox/hurt/player-hurt-1.png"),
+                     pygame.image.load("assets/player/fox/hurt/player-hurt-2.png"),
+                     pygame.image.load("assets/player/fox/hurt/player-hurt-1.png"),
+                     pygame.image.load("assets/player/fox/hurt/player-hurt-2.png")
                     ]                      
             }
         self.animation_frame = 0
         self.direction = False
         
-        self.image = pygame.image.load("assets/player/idle/player-idle-1.png").convert_alpha()
+        self.image = pygame.image.load("assets/player/fox/idle/player-idle-1.png").convert_alpha()
         self.image = pygame.transform.scale_by(self.image,2)
         self.rect = self.image.get_rect(center=(x_pos,y_pos))
-        ##Coin collider here
+        #Coin collider is what the coin collides with before collecting it
+        self.coin_collider = (self.rect.copy()).scale_by(0.95)
         #cactus_collider is what the cactus collides with before determining if the game is over.
         self.cactus_collider = (self.rect.copy()).scale_by(0.8)
         
@@ -100,17 +101,18 @@ class Player:
         if self.direction: self.image = pygame.transform.flip(self.image,True, False) #If the player is facing left, reflect the image along the x-direction
 
         
-    def update(self,screen):
+    def update(self,screen,framerate):
         #Animations to play
         if self.state == self.IDLE:
-             self.animate(self.animation["idle"],60)
+             self.animate(self.animation["idle"],framerate)
         elif self.state == self.MOVING:
-             self.animate(self.animation["run"],60)
+             self.animate(self.animation["run"],framerate)
         elif self.state == self.HURT:
-            self.animate(self.animation["hurt"],60)
+            self.animate(self.animation["hurt"],framerate)
             
         #Adjust colliders
         self.cactus_collider.center = self.rect.center
+        self.coin_collider.center = self.rect.center
         
         #Draw player
         screen.blit(self.image,self.rect)
@@ -140,9 +142,11 @@ if __name__ == "__main__":#Used for testing this part only before adding it to t
         player.move(SCREEN) #Move the player within the boundry of the screen
 
         pygame.draw.rect(SCREEN,"#ffffff",player.rect)
+        pygame.draw.rect(SCREEN,"#00bb00",player.coin_collider)
         pygame.draw.rect(SCREEN,"#bb0000",player.cactus_collider)
+
         
-        player.update(SCREEN)
+        player.update(SCREEN,FRAMERATE)
         pygame.display.update()#Update the screen (move to the next frame)
         
         clock.tick(FRAMERATE)
