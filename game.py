@@ -204,7 +204,7 @@ def play_game(screen,framerate,clock,character=1,bg=None):
         for event in pygame.event.get(): #If the x button is pressed, close the game
             if event.type == pygame.QUIT:
                 RUNNING = False
-    return (score,level)
+    return score
 
 
 if __name__ == "__main__":
@@ -218,6 +218,6 @@ if __name__ == "__main__":
     FRAMERATE = 60
     CLOCK = pygame.time.Clock()
     
-    final_result = play_game(SCREEN,FRAMERATE,CLOCK,2)
-    print(f"Game Over!\nFinal Level: {final_result[1]}\nFinal Score: {final_result[0]}pts")
+    final_result = play_game(SCREEN,FRAMERATE,CLOCK,1)
+    print(f"Game Over!\nFinal Level: {level}\nFinal Score: {final_result}pts")
     pygame.quit()

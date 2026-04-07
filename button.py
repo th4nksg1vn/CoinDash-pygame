@@ -64,11 +64,12 @@ if __name__ == "__main__":
     window = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("Pygame Buttons Tutorial")
 
-    background = pygame.image.load("Graphics/background.jpeg").convert()
+    background = pygame.image.load("assets/Graphics/background.jpeg").convert()
 
-    start_button = Button("Graphics/start_button.jpeg", (300, 150), scale=0.65)
-    exit_button = Button("Graphics/exit_button.jpeg", (300, 300), scale=0.65)
+    start_button = Button("assets/Graphics/start_button.jpeg", (300, 150), scale=0.65)
+    exit_button = Button("assets/Graphics/exit_button.jpeg", (300, 300), scale=0.65)
 
+    
     clock = pygame.time.Clock()
 
     while True:
