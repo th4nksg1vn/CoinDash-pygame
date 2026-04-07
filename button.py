@@ -42,10 +42,10 @@ class Button:
         self.pressed = False
 
     def is_pressed(self):
-        self.pressed = False
+        self.pressed = False #By default buttons are not considered pressed
         mouse_pos = pygame.mouse.get_pos() #Get mouse position
 
-        if self.rect.collidepoint(mouse_pos):
+        if self.rect.collidepoint(mouse_pos): #If the mouse position is in the button area...
                 self.pressed = True
 
         return self.pressed 
@@ -64,10 +64,10 @@ if __name__ == "__main__":
     window = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("Pygame Buttons Tutorial")
 
-    background = pygame.image.load("assets/Graphics/background.jpeg").convert()
+    background = pygame.image.load("assets/UI/background.jpeg").convert()
 
-    start_button = Button("assets/Graphics/start_button.jpeg", (300, 150), scale=0.65)
-    exit_button = Button("assets/Graphics/exit_button.jpeg", (300, 300), scale=0.65)
+    start_button = Button("assets/UI/start_button.jpeg", (300, 150), scale=0.65)
+    exit_button = Button("assets/UI/exit_button.jpeg", (300, 300), scale=0.65)
 
     
     clock = pygame.time.Clock()
