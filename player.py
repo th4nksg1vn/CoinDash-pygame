@@ -84,35 +84,34 @@ class Player:
         self.direction = False
         
         self.image = pygame.image.load("assets/player/fox/idle/fox-idle-1.png").convert_alpha()
-        self.image = pygame.transform.scale_by(self.image,2)
+        self.image = pygame.transform.scale_by(self.image,2) #Make the player twice as big
+        
         self.rect = self.image.get_rect(center=(x_pos,y_pos))
         #Coin collider is what the coin collides with before collecting it
-        self.coin_collider = (self.rect.copy()).scale_by(0.95)
+        self.coin_collider = (self.rect.copy()).scale_by(0.85)
         #cactus_collider is what the cactus collides with before determining if the game is over.
-        self.cactus_collider = (self.rect.copy()).scale_by(0.8)
-        
-        
+        self.cactus_collider = (self.rect.copy()).scale_by(0.5,0.6)
     
     def move(self,boundry):
         if self.state != self.HURT: #The player can move if the state is not hurt
             key = pygame.key.get_pressed() #Get the state of all buttons to see if they are pressed or not
         
             #Change the state of the player if they are moving
-            if key[pygame.K_LEFT] or key[pygame.K_RIGHT] or key[pygame.K_UP] or key[pygame.K_DOWN]:
+            if key[pygame.K_LEFT] or key[pygame.K_RIGHT] or key[pygame.K_UP] or key[pygame.K_DOWN] or key[pygame.K_a] or key[pygame.K_w] or key[pygame.K_s] or key[pygame.K_d]:
                 self.state = self.MOVING
             else:
                 self.state = self.IDLE
             
             #Change the direction the player is facing
-            if key[pygame.K_LEFT]:
+            if key[pygame.K_LEFT] or key[pygame.K_a]:
                 self.direction = True
-            elif key[pygame.K_RIGHT]:
+            elif key[pygame.K_RIGHT] or key[pygame.K_d]:
                 self.direction = False
         
-            if key[pygame.K_LEFT]: self.rect.x -= self.velocity #If the left arrow key is pressed, shift the x position by -velocity
-            if key[pygame.K_RIGHT]: self.rect.x += self.velocity
-            if key[pygame.K_UP]: self.rect.y -= self.velocity
-            if key[pygame.K_DOWN]: self.rect.y += self.velocity
+            if key[pygame.K_LEFT] or key[pygame.K_a]: self.rect.x -= self.velocity #If the left arrow key is pressed, shift the x position by -velocity
+            if key[pygame.K_RIGHT] or key[pygame.K_d]: self.rect.x += self.velocity
+            if key[pygame.K_UP] or key[pygame.K_w]: self.rect.y -= self.velocity
+            if key[pygame.K_DOWN] or key[pygame.K_s]: self.rect.y += self.velocity
         
             #Keep the player within the boundry with clamping
             self.rect.clamp_ip(boundry.get_rect())
@@ -138,7 +137,7 @@ class Player:
             self.animate(self.animation["hurt"],framerate)
             
         #Adjust colliders
-        self.cactus_collider.center = self.rect.center
+        self.cactus_collider.center = (self.rect.center[0],self.rect.center[1]+10)
         self.coin_collider.center = self.rect.center
         
         #Draw player
@@ -158,7 +157,7 @@ if __name__ == "__main__":#Used for testing this part only before adding it to t
     FRAMERATE = 60 #Game runs at 60 fps
     clock = pygame.time.Clock()
     
-    player = Player(100,100,2) #Create a player object
+    player = Player(100,100,1) #Create a player object
     
     RUNNING = True 
     while RUNNING:
