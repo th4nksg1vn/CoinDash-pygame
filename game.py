@@ -88,7 +88,7 @@ def new_level(screen):
     level_sound.play()
     
     level+=1
-    time+=3
+    time+=5
     spawn_coin(screen)
     spawn_cactus(screen)
     #print(f"level: {level}")
@@ -134,7 +134,7 @@ def initialize(screen,character=1):
 
     screen_size=(screen.get_rect().right,screen.get_rect().bottom) #Get the size of the screen
     score = 0 #Set score
-    time = 7 #Set time to 10s, new level adds 3s
+    time = 5 #Set time to 10s, new level adds 5s
     level = 0 #Set level to 0
     player=Player(int(screen_size[0]/2),int(screen_size[1]/2),character)
     new_level(screen) #Call new_level to spawn the appropriate number of cactii and coins
