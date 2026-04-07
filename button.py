@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     pygame.init()
     window = pygame.display.set_mode((800, 600))
-    pygame.display.set_caption("Pygame Buttons Tutorial")
+    pygame.display.set_caption("Button Module")
 
     background = pygame.image.load("assets/UI/background.jpeg").convert()
 
