@@ -12,7 +12,7 @@ So how I have designed the player is that, you control a rectangle that you cann
 import pygame
 
 class Player:
-    ###self.STATES = {IDLE,MOVING,DEAD}
+    ###self.STATES = {IDLE,MOVING,DEAD}; A shoddy representation of an enum used to represent the player state
     ###self.x_pos, self.y_pos : int; The position of the player
     ###self.velocity : int; The speed of the player
     ###self.animation : dict(); The animations to be used by the player
@@ -22,7 +22,7 @@ class Player:
     ###self.rect : pygame.rect; A rectangle which is actually being controlled by the player
     
     def __init__(self,x_pos,y_pos,character=1):
-        ##STATES{ - A shoddy representation of an enum used to represent the player state
+        ##STATES{
         self.IDLE = 1
         self.MOVING = 2
         self.HURT = 3

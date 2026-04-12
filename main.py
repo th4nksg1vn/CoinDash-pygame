@@ -1,7 +1,22 @@
-"""
-This is the file to be opened if you want to play the game.
-All the screens, score handling and others will be handled here.
-"""
+# 
+#   ____ ___ ___ _   _   ____    _    ____  _   _ _ 
+#  / ___/ _ \_ _| \ | | |  _ \  / \  / ___|| | | | |
+# | |  | | | | ||  \| | | | | |/ _ \ \___ \| |_| | |
+# | |__| |_| | || |\  | | |_| / ___ \ ___) |  _  |_|
+#  \____\___/___|_| \_| |____/_/   \_\____/|_| |_(_)
+# 
+# 
+# This module serves as the main entry point of the game.
+# The reason is that this file manages all menus, screens, and overall flow,
+# which can involve handling multiple screens such as gameplay, customization,
+# score display, and tutorials...
+# 
+# It is responsible for initializing the window, handling user input across
+# different screens, and coordinating transitions between them.
+# 
+# It also manages score saving/loading, character and background selection.
+# 
+
 #Import game components
 from game import play_game
 from button import Button
@@ -13,7 +28,7 @@ pygame.init()
 
 #GLOBALS
 SCREEN = pygame.display.set_mode((480,720))
-FRAMERATE = 60
+FRAMERATE = 60 #The game runs optimally at 60fps, any less will cause it to lag, any more would make it very fast.
 BACKGROUND = pygame.image.load("assets/bg-grass.png")
 CLOCK = pygame.time.Clock()
 CHARACTER = 1
@@ -23,10 +38,10 @@ def save_score(new_score):
     """Read the scores from the file, add score, sort scores, store top 5 scores.
     If scores.txt is nonexistent, create a new one with template scores."""
     
-    try:
+    try:#Try to open the file if it exists
         scores_file = open("scores.txt","r")
         
-    except FileNotFoundError:
+    except FileNotFoundError: #If not create a new file from the template
         #Create new file, store template scores there
         scores_file = open("scores.txt","w")
         scores = [(555,'ASD'),(350,'TNA'),(225,'JSM'),(130,'MCL'),(50,'KVN')]
@@ -124,11 +139,13 @@ def customize():
 def scores():
     global SCREEN,FRAMERATE,BACKGROUND,CLOCK
     
-    save_score(0) #Create the new file if the 'scores' file is non-existent. This is a cheap way of achieving that... I'm tired.
+    save_score(0) #Create the new file if the 'scores' file is non-existent. This is a cheap way of achieving that...
     
     title = pygame.font.Font("assets/Kenney Bold.ttf",34).render("High Scores",True,"#ffffff")
 
     def get_scores():
+        """Get the scores from scores.txt"""
+        
         scores_file = open("scores.txt","r")
         result = []
         read_line = scores_file.read().split('|')
@@ -233,13 +250,15 @@ def main_menu():
                 return
                 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if start_btn.is_pressed():
-                    final_result = play_game(SCREEN,FRAMERATE,CLOCK,CHARACTER,BACKGROUND)
-                    save_score(final_result)
-                    scores()
-                elif scores_btn.is_pressed(): scores()
-                elif customize_btn.is_pressed():customize()
-                elif how_to_play_btn.is_pressed():how_to_play()
+                
+                if start_btn.is_pressed(): #If play button is pressed...
+                    final_result = play_game(SCREEN,FRAMERATE,CLOCK,CHARACTER,BACKGROUND) #Play the game and get the score
+                    save_score(final_result) #Save it to the file
+                    scores() #Go to the scores screen
+                    
+                elif scores_btn.is_pressed(): scores() #Go to the scores screen
+                elif customize_btn.is_pressed():customize() #Go to the customize screen
+                elif how_to_play_btn.is_pressed():how_to_play() #Go to the scores screen
                 elif exit_btn.is_pressed():
                     RUNNING=False
                     pygame.quit()
@@ -250,5 +269,5 @@ def main_menu():
 
 
 
-main_menu()
-exit()
+main_menu() #Start from the main menu, if exit is pressed, it would end the function call by returning nothing
+exit() #Close the program

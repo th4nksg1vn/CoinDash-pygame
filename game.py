@@ -1,9 +1,14 @@
 """
-This module handles the playing of the game.
-The reason is that this code is planned to be especially long...
-so the main game would probably be stored in a file called "main" or something like that
+This module handles the core gameplay loop and logic.
+The reason is that this file contains most of the mechanics such as spawning,
+collision detection, scoring, and level progression, which can become quite long...
 
-I plan to set up the screen, frame rate, and caption in the main file
+The main file is expected to handle setup tasks like initializing the screen,
+frame rate, and window caption, while this module focuses purely on the game part.
+
+It also manages global game state such as the player, score, timer,
+and active sprites (coins and cactii), as well as transitions between levels
+and the game over state.
 """
 #Import all game components
 from player import Player
@@ -35,7 +40,7 @@ def set_time(framerate):
     time=time-(1/framerate)
 
 def spawn_coin(screen):
-    """First 2 coins spawn at level 1
+    """First 3 coins spawn at level 1
     3+n//3 coins spawn every n levels
     (so level 1 will spawn 3 coins, level 3 will spawn 4, level 6 will sapwn 5...)
 
@@ -43,7 +48,7 @@ def spawn_coin(screen):
     global coins,level,player
     
     screen_size = (screen.get_rect().right,screen.get_rect().bottom) #Get the size of the screen
-    spawn_no = 3+level//3 #Number of coins to spawn
+    spawn_no = 3 + level//3 #Number of coins to spawn
     
     #The logic behind this loop is in the coin module.
     for i in range(spawn_no):
@@ -74,7 +79,7 @@ def spawn_cactus(screen):
         spawn_x = random.randint(0,screen.get_width() - Cactus(0,0).rect.right)
         spawn_y = random.randint(0,screen.get_height() - Cactus(0,0).rect.bottom)
         
-        #Spawn the cactus somewhere else in the event it spawns on top of the player
+        #Spawn the cactus somewhere else in the event it spawns on top of the player or on top of a coin
         while ((spawn_x in range(player.rect.left,player.rect.right)) or (spawn_y in range(player.rect.top,player.rect.bottom))) or len(pygame.sprite.spritecollide(Cactus(spawn_x,spawn_y),coins,False))!=0:
             spawn_x = random.randint(0,screen.get_width() - Cactus(0,0).rect.right)
             spawn_y = random.randint(0,screen.get_height() - Cactus(0,0).rect.bottom)
@@ -84,15 +89,14 @@ def spawn_cactus(screen):
 def new_level(screen):
     global level,time
     
-    level_sound = pygame.mixer.Sound("assets/audio/Level.wav") #Play the sound to start the game
-    level_sound.play()
+    level_sound = pygame.mixer.Sound("assets/audio/Level.wav") #The sound to start the level
+    level_sound.play() #Play the sound
     
     level+=1
     time+=5
     spawn_coin(screen)
     spawn_cactus(screen)
-    #print(f"level: {level}")
-
+    
 def check_collected():
     global coins, player
     
@@ -100,7 +104,7 @@ def check_collected():
     
     for this_coin in coins.sprites(): #For each coin in the sprite.Group
         if player.coin_collider.colliderect(this_coin.collider): #If the player.rect has collided with the coin.rect
-            pickup_sound.play() #Play the coin_pickup sound
+            pickup_sound.play() #Play the coin pickup_sound
             increase_score() #Update the score
             this_coin.kill() #Remove this coin
 
@@ -111,15 +115,15 @@ def check_collided():
     
     for this_cactus in cactii.sprites(): #For each cactus in the sprite.Group
         if player.cactus_collider.colliderect(this_cactus.collider): #If the player has collided with the cactus
-            hit_sound.play()
+            hit_sound.play() #Play the hit sound.
             return True
     return False
 
 def game_over():
     global player
 
-    end_sound = pygame.mixer.Sound("assets/audio/EndSound.wav")
-    end_sound.play()
+    end_sound = pygame.mixer.Sound("assets/audio/EndSound.wav") #Sound to play when the game has ended
+    end_sound.play() #Play the sound
     
     player.state = player.HURT #Set player state to hurt
     
@@ -150,7 +154,7 @@ def play_game(screen,framerate,clock,character=1,bg=None):
     else:
         background = bg
     
-    ui_font = pygame.font.Font('assets/Kenney Bold.ttf',24)
+    ui_font = pygame.font.Font('assets/Kenney Bold.ttf',24) #Font for all UI elements
     
     RUNNING = True 
     while RUNNING:
@@ -186,9 +190,9 @@ def play_game(screen,framerate,clock,character=1,bg=None):
         coins.update()
         
         if time<=0: #Show "Time up!" when the timer has ended
-            time_text = ui_font.render(f'Time Up!',True,"#ff8888")
+            time_text = ui_font.render(f'Time Up!',True,"#e3242b")
         elif time<1:#make the timer red and decimal when less than 1 second is remaining
-            time_text = ui_font.render(f'{round(time,1)}s',True,"#ff8888")
+            time_text = ui_font.render(f'{round(time,1)}s',True,"#e3242b")
         else:#Else keep it white
             time_text = ui_font.render(f'{ int(time)}s',True,"#ffffff")
             

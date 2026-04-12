@@ -1,9 +1,15 @@
 """
-This module defines each cactus the game
+This module defines each cactus the game.
+
+Cactus is a member of the pygame.sprite class because it will be needed to use the sprite.Group object
 """
 import pygame
 class Cactus(pygame.sprite.Sprite):
-    #cactus is a member of the pygame.sprite class because it will be needed to use the sprite.Group object
+    
+    ###self.image : pygame.image; The current image/frame of the cactus
+    ###self.rect : pygame.rect; A rectangle which contains the cactus and its colliders
+    ###self.x_pos, self.y_pos : int; The position of the cactus
+    ###self.colider : pygame.rect; The collider is what the player collides with before determining if the game is over.
     
     def __init__(self, x_pos,y_pos):
         super().__init__() #Initilize the base class
@@ -12,7 +18,6 @@ class Cactus(pygame.sprite.Sprite):
         self.rect.x = x_pos
         self.rect.y = y_pos
         
-        #collider is what the player collides with before determining if the game is over.
         #It is smaller than the image/rect to allow for leniency
         self.collider = (self.rect.copy()).scale_by(0.8) 
         
@@ -33,6 +38,7 @@ if __name__ == "__main__":
     
     #3 Cactii will be spawned on screen at random locations
     cactii = pygame.sprite.Group() #Create the sprite group
+    
     for i in range(3):
         #If the cactus spawns at (500,500), it will not be visible, so we want it to spawn such that...
         #The maximum position is when the bottom right of the cactus is at the corner

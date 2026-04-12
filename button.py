@@ -1,3 +1,7 @@
+"""
+    This module defines each button in the game.
+"""
+
 import pygame
 
 class Button:
@@ -35,8 +39,9 @@ class Button:
         #Finalise button
         self.image = pygame.transform.smoothscale(self.image, (self.new_width, self.new_height))
         self.rendered_text = self.font.render(self.text,True,text_color,background_color)
-        
-        self.text_rect = self.rendered_text.get_rect(center=(int(self.new_width/2)+position[0],int(self.new_height/2)+position[1]))#Create a rect at the center of the button to draw the text on
+
+        #Create a rect at the center of the button to draw the text on
+        self.text_rect = self.rendered_text.get_rect(center=(int(self.new_width/2)+position[0],int(self.new_height/2)+position[1]))
         
         self.rect = self.image.get_rect(topleft = position)
         self.pressed = False
@@ -66,8 +71,8 @@ if __name__ == "__main__":
 
     background = pygame.image.load("assets/UI/background.jpeg").convert()
 
-    start_button = Button("assets/UI/start_button.jpeg", (300, 150), scale=0.65)
-    exit_button = Button("assets/UI/exit_button.jpeg", (300, 300), scale=0.65)
+    start_button = Button("assets/UI/btn_blue.png", (300, 150), "Start", font_size=52, scale=0.65) #Create a blue button with the text "Start" on it
+    exit_button = Button("assets/UI/btn_red.png", (300, 300), "Exit", font_size=52, scale=0.65)
 
     
     clock = pygame.time.Clock()

@@ -1,10 +1,19 @@
 """
-This module defines each coin in the game
+This module defines each coin in the game.
+
+Coin is a sprite so it can be used in sprite groups and collisions
 """
 import pygame
 
 class Coin(pygame.sprite.Sprite):
-    # Coin is a sprite so it can be used in sprite groups and collisions
+
+    ###self.image : pygame.image; The current image/frame of the coin
+    ###self.rect : pygame.rect; A rectangle which contains the coin and its colliders
+    ###self.x_pos, self.y_pos : int; The position of the coin
+    ###self.colider : pygame.rect; The collider is what the player collides with before determining whether a coin has been collected.
+    ###self.animation : list(); The animations to be used by the coin
+    ###self.animation_frame : float; Stores the current frame in the animation
+    
     def __init__(self, x_pos, y_pos):
         super().__init__()
 
